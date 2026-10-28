@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoursePress Demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#0f1e1a;--panel:#152822;--line:#24403a;--fg:#eef2e8;--muted:#9bb0a6;--gold:#d8b15a;--ok:#6fcf97;--bad:#e8806b;
+--display:"Fraunces",Georgia,serif;--body:"DM Sans",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 var(--body)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px max(16px,4vw);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-size:20px}.brand span{color:var(--gold)}
+.demo{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:3px 10px}
+.wrap{max-width:1100px;margin:0 auto;padding:24px max(16px,4vw);display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;align-self:start}
+aside h2{font-family:var(--display);font-size:18px;margin:0 0 4px}aside p{margin:0 0 14px;color:var(--muted);font-size:13px}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:14px}.prog i{display:block;height:100%;background:var(--gold);width:0;transition:width .4s}
+.mod{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:14px 0 6px}
+.les{display:flex;gap:8px;align-items:center;width:100%;text-align:left;background:none;border:0;color:var(--fg);font:inherit;font-size:14px;padding:6px 8px;border-radius:8px;cursor:pointer}
+.les:hover,.les.on{background:#1d362f}.les b{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--muted);flex:none}
+.les.done b{background:var(--ok);border-color:var(--ok)}
+.cert-btn{margin-top:16px;width:100%;padding:10px;border-radius:10px;border:1px solid var(--gold);background:none;color:var(--gold);font:600 14px var(--body);cursor:pointer}
+.cert-btn:disabled{opacity:.4;cursor:not-allowed}
+main{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:var(--display);font-size:clamp(26px,4vw,38px);line-height:1.1;margin:6px 0 14px}
+.lesson p{max-width:65ch;color:#dfe7dc}
+.quiz{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+.quiz h3{font-family:var(--display);font-size:18px;margin:0 0 10px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#11231e;color:var(--fg);font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--gold)}.opt.right{border-color:var(--ok);background:#163a2a}.opt.wrong{border-color:var(--bad);background:#3a1f1a}
+.fb{margin:8px 0 0;font-size:14px}
+.next{margin-top:18px;padding:10px 18px;border-radius:10px;border:0;background:var(--gold);color:#1a1405;font:700 14px var(--body);cursor:pointer}
+.cert{background:#f6efdc;color:#1d2a24;border-radius:14px;padding:40px 28px;text-align:center;border:8px double #b48a37}
+.cert h1{color:#1d2a24}.cert input{font:inherit;padding:10px 12px;border-radius:8px;border:1px solid #b48a37;width:min(320px,100%);text-align:center}
+.cert .name{font-family:var(--display);font-size:34px;font-weight:600;margin:14px 0;min-height:1.2em}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 34px}
+footer a{color:var(--gold)}
+@media(max-width:760px){.wrap{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="top"><div class="brand">Course<span>Press</span></div><span class="demo">Demo course · generated from a sample PDF</span></div>
+<div class="wrap">
+  <aside>
+    <h2>Social Media &amp; Travel Decisions</h2>
+    <p>3 modules · 6 lessons · built from a research paper PDF</p>
+    <div class="prog"><i id="bar"></i></div>
+    <div id="nav"></div>
+    <button class="cert-btn" id="certBtn" disabled>Get certificate</button>
+  </aside>
+  <main id="view"></main>
+</div>
+<footer>CoursePress turns any text PDF into modules, lessons, quizzes and a certificate. This page is a static demo of the course viewer. Built by Sameer Shah · <a href="https://github.com/adminbbk">GitHub</a></footer>
+<script>
+const course=[
+ {m:"Module 1 · The new travel funnel",l:[
+  {t:"Why social media replaced the travel brochure",p:["Travellers once relied on agents, guidebooks and printed brochures. Today the first contact with a destination is usually a short video or a friend's post.","Social platforms compress inspiration, research and booking into one feed. A traveller can see a beach, read reviews and book a hotel without leaving the app."],q:"What role do social platforms now play in travel planning?",o:["Only the final booking step","Inspiration, research and booking together","Mostly customer complaints"],a:1},
+  {t:"User-generated content and trust",p:["Posts from ordinary travellers tend to feel more honest than adverts. Viewers trust real photos, unedited reviews and comments from people like them.","For tourism brands this means encouraging guests to share, then featuring their content with permission."],q:"Why does user-generated content work well for tourism brands?",o:["It is cheaper to print","It feels more authentic than adverts","Platforms rank it lower"],a:1}]},
+ {m:"Module 2 · Influence and decisions",l:[
+  {t:"Influencers as travel advisers",p:["Travel creators act like modern advisers. Their audience follows them for taste, so a recommendation carries weight.","Smaller creators often drive more bookings per follower because their audiences are tighter and more engaged."],q:"Which creators often get more bookings per follower?",o:["Smaller, highly engaged creators","Accounts with the most followers","Brand-owned pages only"],a:0},
+  {t:"From scroll to booking",p:["A typical path: a reel sparks interest, the traveller saves it, searches reviews, compares prices, then books.","Each step is a chance for a brand to appear again with useful, consistent content."],q:"What usually happens right after a reel sparks interest?",o:["Immediate booking","The traveller saves it and researches","The traveller unfollows"],a:1}]},
+ {m:"Module 3 · Applying it",l:[
+  {t:"Planning content for a destination",p:["Good destination content answers real questions: what it looks like, what it costs, how to get there and what to do.","Mix formats: reels for reach, carousels for detail, stories for timely offers."],q:"Which format is best suited to timely offers?",o:["Stories","Printed flyers","Long blog posts"],a:0},
+  {t:"Measuring what works",p:["Track saves, shares and profile visits, not only likes. Saves signal intent to visit.","Link campaigns to bookings with tracked links or offer codes so spending follows results."],q:"Which metric best signals intent to visit?",o:["Likes","Saves","Follower count"],a:1}]}
+];
+const flat=[];course.forEach((m,mi)=>m.l.forEach((l,li)=>flat.push({...l,mi,li})));
+const done=new Set();let cur=0;
+const nav=document.getElementById('nav'),view=document.getElementById('view'),bar=document.getElementById('bar'),certBtn=document.getElementById('certBtn');
+function renderNav(){nav.innerHTML='';course.forEach((m,mi)=>{const h=document.createElement('div');h.className='mod';h.textContent=m.m;nav.appendChild(h);
+ m.l.forEach((l,li)=>{const i=flat.findIndex(f=>f.mi===mi&&f.li===li);const b=document.createElement('button');b.className='les'+(i===cur?' on':'')+(done.has(i)?' done':'');b.innerHTML='<b></b>'+l.t;b.onclick=()=>{cur=i;render()};nav.appendChild(b)})});
+ bar.style.width=(done.size/flat.length*100)+'%';certBtn.disabled=done.size<flat.length}
+function render(){const L=flat[cur];renderNav();
+ view.innerHTML=`<div class="card lesson"><div class="eyebrow">${course[L.mi].m} · Lesson ${cur+1} of ${flat.length}</div><h1>${L.t}</h1>${L.p.map(x=>`<p>${x}</p>`).join('')}
+ <div class="quiz"><h3>Quick check</h3><p>${L.q}</p>${L.o.map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')}<p class="fb" id="fb"></p></div></div>`;
+ view.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,fb=document.getElementById('fb');view.querySelectorAll('.opt').forEach(x=>x.classList.remove('right','wrong'));
+  if(i===L.a){b.classList.add('right');fb.textContent='Correct. Lesson complete.';done.add(cur);renderNav();
+   if(!view.querySelector('.next')){const n=document.createElement('button');n.className='next';n.textContent=cur<flat.length-1?'Next lesson':'Get certificate';n.onclick=()=>{if(cur<flat.length-1){cur++;render()}else cert()};view.querySelector('.quiz').appendChild(n)}}
+  else{b.classList.add('wrong');fb.textContent='Not quite. Try another answer.'}})}
+function cert(){view.innerHTML=`<div class="cert"><div class="eyebrow" style="color:#8a6a28">Certificate of completion</div><h1>Social Media &amp; Travel Decisions</h1><p>This certifies that</p><div class="name" id="nm">Your name</div><input id="ni" placeholder="Type your name" aria-label="Your name"><p style="margin-top:14px">has completed all 6 lessons and quizzes.</p></div>`;
+ document.getElementById('ni').oninput=e=>document.getElementById('nm').textContent=e.target.value||'Your name'}
+certBtn.onclick=cert;render();
+</script>
+</body>
+</html>

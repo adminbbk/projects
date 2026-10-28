@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Translation Counter Demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap">
+<style>
+:root{--green:#0e3b2e;--green2:#12503d;--sand:#f1ead9;--sand2:#e5dbc2;--ink:#1b2a24;--gold:#c9a227;--white:#fbf8f0;
+--display:"Baloo Bhaijaan 2",system-ui,sans-serif;--body:"IBM Plex Sans Arabic",system-ui,sans-serif}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;font:15px/1.5 var(--body);display:flex;flex-direction:column;min-height:100dvh;background:var(--green)}
+.panel{flex:1;display:flex;flex-direction:column;gap:10px;padding:14px max(16px,4vw);min-height:0}
+.guest{background:var(--sand);color:var(--ink)}.staff{background:var(--green);color:var(--white)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.title{font:800 13px var(--display);letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.bubble{flex:1;min-height:90px;border-radius:16px;padding:14px 16px;font-size:clamp(18px,3.2vw,26px);display:flex;align-items:center}
+.guest .bubble{background:var(--white);border:1.5px solid var(--sand2)}.staff .bubble{background:var(--green2);border:1.5px solid #1f6b52}
+.staff .bubble{direction:rtl;font-family:var(--body)}
+.bubble.empty{opacity:.5;font-size:15px}
+.phrases{display:flex;flex-wrap:wrap;gap:8px}
+.phrases button{border-radius:99px;padding:8px 14px;font:500 14px var(--body);cursor:pointer;transition:transform .15s}
+.phrases button:active{transform:scale(.96)}
+.guest .phrases button{background:transparent;border:1.5px solid var(--green);color:var(--green)}
+.staff .phrases button{background:transparent;border:1.5px solid var(--gold);color:var(--white);direction:rtl}
+.seam{height:6px;background:linear-gradient(90deg,var(--gold),#e4c766,var(--gold))}
+.note{font-size:12px;opacity:.75}
+.speak{border:0;border-radius:99px;padding:6px 12px;font:600 12px var(--body);cursor:pointer}
+.guest .speak{background:var(--green);color:var(--white)}.staff .speak{background:var(--gold);color:var(--green)}
+footer{background:var(--green);color:#a9c3b7;text-align:center;font-size:12px;padding:10px 16px 16px}footer a{color:var(--gold)}
+@media(min-width:900px){body{flex-direction:row;flex-wrap:wrap}.panel{flex:1 1 45%}.seam{width:6px;height:auto;background:linear-gradient(180deg,var(--gold),#e4c766,var(--gold))}footer{flex-basis:100%}}
+</style>
+</head>
+<body>
+<section class="panel guest" aria-label="Customer side">
+  <div class="head"><span class="title">Customer · English</span><button class="speak" id="sayG" type="button">Play</button></div>
+  <div class="bubble empty" id="gB">Tap a phrase on either side. The other side sees it translated.</div>
+  <div class="phrases" id="gP"></div>
+</section>
+<div class="seam" aria-hidden="true"></div>
+<section class="panel staff" aria-label="Staff side" lang="ar">
+  <div class="head"><span class="title">الموظف · العربية</span><button class="speak" id="sayS" type="button">تشغيل</button></div>
+  <div class="bubble empty" id="sB">اضغط على عبارة وسيظهر لك معناها</div>
+  <div class="phrases" id="sP"></div>
+</section>
+<footer>Translation Counter demo: a split-screen counter for Arabic-speaking staff and English-speaking customers. This demo uses a sample phrasebook; the full prototype adds live speech recognition and AI translation. Built by Sameer Shah · <a href="https://github.com/adminbbk">GitHub</a></footer>
+<script>
+const pairs=[
+ ["Hello, do you speak English?","مرحبا، هل تتكلم الإنجليزية؟"],
+ ["How much is this?","كم سعر هذا؟"],
+ ["Do you have a bigger size?","هل عندك مقاس أكبر؟"],
+ ["Can I pay by card?","هل أقدر أدفع بالبطاقة؟"],
+ ["Where is the fitting room?","وين غرفة القياس؟"],
+ ["Thank you very much","شكراً جزيلاً"]
+];
+const staff=[
+ ["أهلاً وسهلاً، كيف أقدر أساعدك؟","Welcome, how can I help you?"],
+ ["السعر ١٢٠ درهم","The price is 120 dirhams"],
+ ["نعم، نقبل البطاقات","Yes, we accept cards"],
+ ["لحظة من فضلك، أتأكد من المخزن","One moment please, I'll check the stock"],
+ ["غرفة القياس على اليسار","The fitting room is on the left"],
+ ["العفو، نورتنا","You're welcome, thanks for visiting"]
+];
+const gB=document.getElementById('gB'),sB=document.getElementById('sB');let lastG='',lastS='';
+function show(en,ar){gB.textContent=en;sB.textContent=ar;gB.classList.remove('empty');sB.classList.remove('empty');lastG=en;lastS=ar}
+function say(t,lang){try{const u=new SpeechSynthesisUtterance(t);u.lang=lang;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+document.getElementById('gP').innerHTML=pairs.map((p,i)=>`<button type="button" data-i="${i}">${p[0]}</button>`).join('');
+document.getElementById('sP').innerHTML=staff.map((p,i)=>`<button type="button" data-i="${i}">${p[0]}</button>`).join('');
+document.querySelectorAll('#gP button').forEach(b=>b.onclick=()=>{const p=pairs[b.dataset.i];show(p[0],p[1]);say(p[1],'ar-SA')});
+document.querySelectorAll('#sP button').forEach(b=>b.onclick=()=>{const p=staff[b.dataset.i];show(p[1],p[0]);say(p[1],'en-US')});
+document.getElementById('sayG').onclick=()=>lastG&&say(lastG,'en-US');
+document.getElementById('sayS').onclick=()=>lastS&&say(lastS,'ar-SA');
+</script>
+</body>
+</html>
